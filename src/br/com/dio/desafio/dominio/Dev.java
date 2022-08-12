@@ -4,12 +4,18 @@ import java.util.*;
 
 public class Dev {
     private String nome;
-    private Set<Conteudo> conteudosInscritos = new LinkedHashSet<>();
+    protected Set<Conteudo> conteudosInscritos = new LinkedHashSet<>();
     private Set<Conteudo> conteudosConcluidos = new LinkedHashSet<>();
+
+    public Dev() {}
+	
+	public Dev(String nome) {
+		this.nome = nome;
+	}
 
     public void inscreverBootcamp(Bootcamp bootcamp){
         this.conteudosInscritos.addAll(bootcamp.getConteudos());
-        bootcamp.getDevsInscritos().add(this);
+        bootcamp.getDevsInscritos().add(this.getNome());
     }
 
     public void progredir() {
@@ -18,15 +24,15 @@ public class Dev {
             this.conteudosConcluidos.add(conteudo.get());
             this.conteudosInscritos.remove(conteudo.get());
         } else {
-            System.err.println("VocÃª nÃ£o estÃ¡ matriculado em nenhum conteÃºdo!");
+            System.err.println("Você não está matriculado em nenhum conteúdo!");
         }
     }
 
-    public double calcularTotalXp() {
+    public double calcularTotalXP() {
         Iterator<Conteudo> iterator = this.conteudosConcluidos.iterator();
         double soma = 0;
         while(iterator.hasNext()){
-            double next = iterator.next().calcularXp();
+            double next = iterator.next().calcularXP();
             soma += next;
         }
         return soma;
