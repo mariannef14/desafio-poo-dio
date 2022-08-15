@@ -2,19 +2,25 @@ package br.com.dio.desafio.dominio;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 public class Bootcamp {
     private String nome;
     private String descricao;
     private final LocalDate dataInicial = LocalDate.now();
     private final LocalDate dataFinal = dataInicial.plusDays(45);
-    private Set<String> devsInscritos = new HashSet<>();
+    private Set<Dev> devsInscritos = new LinkedHashSet<>();
+    private Set<Integer> idDevs = new LinkedHashSet<>();
     private Set<Conteudo> conteudos = new LinkedHashSet<>();
     private int cargaHoraria;
+
 
     public Bootcamp() {}
 	
@@ -42,11 +48,11 @@ public class Bootcamp {
         return dataFinal;
     }
 
-    public Set<String> getDevsInscritos() {
+    public Set<Dev> getDevsInscritos() {    	
         return devsInscritos;
     }
 
-    public void setDevsInscritos(Set<String> devsInscritos) {
+    public void setDevsInscritos(Set<Dev> devsInscritos) {
         this.devsInscritos = devsInscritos;
     }
 
@@ -76,23 +82,31 @@ public class Bootcamp {
 
     @Override
     public int hashCode() {
-        return Objects.hash(nome, descricao, dataInicial, dataFinal, devsInscritos, conteudos);
+        return Objects.hash(nome, descricao, dataInicial, dataFinal, devsInscritos, conteudos, cargaHoraria);
     }
-
+    
+    public Set<Integer> idTodosDevs(){
+    	return devsInscritos.stream()
+    			.map(dev-> dev.getId())
+				.collect(Collectors.toSet());
+    }
+    
     public void gerarCertificado(Dev dev) {
 		
-		if(this.getDevsInscritos().contains(dev.getNome())) {
+		if(idTodosDevs().contains(dev.getId())) {
 			if(dev.conteudosInscritos.isEmpty()) {
 				LocalDate dataAtual = LocalDate.now();
 				DateTimeFormatter formatarData =  DateTimeFormatter.ofPattern("dd/MM/yyyy");
 				
 				System.out.printf("Certificamos que %s em " + formatarData.format(dataAtual) + ", concluiu o bootcamp %s com carga horária de %d horas \n", dev.getNome(), this.getNome(), this.getCargaHoraria());
 			} else {
-				System.out.println("Você ainda não concluiu os seguintes conteúdos: " + dev.getConteudosInscritos());
+				System.out.println("Para gerar o seu certificado, você precisa concluir os seguintes conteúdos: " + dev.getConteudosInscritos());
 			}
 		} else {
-			System.out.println("Você não está inscrito no bootcamp");
+			System.out.println("Você não está inscrito(a) no bootcamp");
 		}
 		
 	}
+    
+    
 }
